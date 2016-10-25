@@ -1,0 +1,520 @@
+%YAML 1.2
+---
+name: HTSL
+file_extensions:
+  - htsl
+first_line_match: '^X?HTML\d(\.\d)?$'
+scope: source.htsl
+contexts:
+  main:
+    - include: empty-line
+    - include: comment
+    - include: common
+    - include: embedding
+    - include: control-node
+    - include: tag-node
+
+  empty-line:
+    - match: '^(\t*)(\n)$'
+      captures:
+        1: indent.htsl
+        2: empty-line coding.htsl
+  comment:
+    # embed
+    - match: '(^\t*)(!+)(.*\{>$)'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: comment.htsl
+      push:
+        - meta_scope: meta.comment.block.htsl
+        - meta_content_scope: comment
+        - match: '^(\1<\})'
+          captures:
+            1: comment.htsl
+          pop: true
+
+    # Comment
+    - match: '(^\t*)(!+)'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.comment.block.htsl
+        - meta_content_scope: comment
+        - match: '^(?!\1\t)'
+          pop: true
+
+  common:
+    # Strig without excape
+    - match: '(^\t*)(`)'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.string.block.htsl
+        - meta_content_scope: string
+        - match: '\n'
+          pop: true
+
+    # PHP expression
+    - match: '(^\t*)(=)'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.entity-value.php.htsl
+        - meta_content_scope: source.php
+        - match: '\n'
+          pop: true
+        - include: 'htsl-php-support.sublime-syntax#expressions'
+
+    # Doc controller
+    - match: '^(\t*)(@)(extend|include|section|show)(\() (.*) (\))$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: storage.modifier.htsl
+        4: punctuation.separator.htsl
+        5: string.htsl
+        6: punctuation.separator.htsl
+
+
+  embedding:
+    # CSS embedding
+    - match: '^(\t*)(-)(css)(\{>)$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: entity.name.tag.htsl
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.embedded.css.htsl
+        - meta_content_scope: source.css
+        - include: scope:source.css
+      with_prototype:
+        - match: '<\}'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+
+    # JS embedding
+    - match: '^(\t*)(-)(js)(\{>)$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: entity.name.tag.htsl
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.embedded.js.htsl
+        - meta_content_scope: source.js embedded
+        - include: scope:source.js
+      with_prototype:
+        - match: '^\1<\}'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+
+    # PHP embedding
+    - match: '^(\t*)(-)(php)(\{>)$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: entity.name.tag.htsl
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.embedded.php.htsl
+        - meta_content_scope: source.php
+        - include: scope:source.php
+      with_prototype:
+        - match: '^\1<\}'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+
+    # Code embedding
+    - match: '^(\t*)(-)(code)(\()(\w+)(\))(\{>)$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: entity.name.tag.htsl
+        4: punctuation.separator.htsl
+        5: string
+        6: punctuation.separator.htsl
+        7: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.embedded.php.htsl
+        - meta_content_scope: comment
+      with_prototype:
+        - match: '^\1<\}'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+
+  # ~Control node
+  control-node:
+    # else like
+    - match: ^(\t*)(~)(else|then|continue|break)
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+      push:
+        - match: '$'
+          pop: true
+
+    # if like  #TODO: loops with continue and break like switch;
+    - match: '^(\t*)(~)(if|if-not|if-all|if-all-not|if-not-all|if-not-all-not|else-if|while|do-while|continue|break)(\() '
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.control-node.condition.htsl
+        - meta_content_scope: control-node.condition.htsl
+        - match: ' \)$'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+        - include: 'htsl-php-support.sublime-syntax#expressions'
+
+    # for like
+    - match: '^(\t*)(~)(for|if-all)(\() '
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.control-node.condition.htsl
+        - meta_content_scope: control-node.condition.htsl
+        - match: '(;)( )'
+          captures:
+            1: punctuation.separator.htsl
+            2: space
+        - include: 'htsl-php-support.sublime-syntax#expressions'
+        - match: '(?<=; )\)$'
+          pop: true
+
+    # for-each with terrible native php sublime-syntax same with if like, must change.
+    - match: '^(\t*)(~)(for-each)(\() '
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+        4: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.control-node.condition.htsl
+        - meta_content_scope: control-node.condition.htsl
+        - include: 'htsl-php-support.sublime-syntax#expressions'
+        - match: ' \)$'
+          captures:
+            0: punctuation.separator.htsl
+          pop: true
+
+    # switch
+    - match: '^(\t*)(~)(switch)(\() (.*) (\))$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+        4: punctuation.separator.htsl
+        5: source.php
+        6: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.control-node.switch.htsl
+        - meta_content_scope: control-node.switch.htsl
+        - match: '^(?!\1\t[^\t])'
+          pop: true
+        - include: comment
+
+        - match: '^(\t*)(~)(case)(\() (.*) (\))$'
+          captures:
+            1: indent.htsl
+            2: punctuation.separator.htsl
+            3: keyword.control-node
+            4: punctuation.separator.htsl
+            5: source.php
+            6: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.switch-case.htsl
+            - meta_content_scope: switch-case.htsl
+            - match: '^(?!\1\t)'
+              pop: true
+            - include: main
+            - include: switch-case
+            - include: switch-default
+
+        - match: '^(\t*)(~)(default)$'
+          captures:
+            1: indent.htsl
+            2: punctuation.separator.htsl
+            3: keyword.control-node
+          push:
+            - meta_scope: meta.switch-default.htsl
+            - meta_content_scope: switch-default.htsl
+            - match: '^(?!\1\t)'
+              pop: true
+            - include: main
+            - include: switch-case
+            - include: switch-default
+        - include: coding-control-node
+    - include: coding-control-node
+
+  coding-control-node:
+    # other words
+    - match: ^(\t*)(~)(?:[\w-]*)(\n?)
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: coding.htsl
+      push:
+        - meta_scope: meta.control-node.none
+        - meta_content_scope: switch-default.htsl
+        - match: '$'
+          pop: true
+
+  switch-case:
+    - match: '^(\t*)(~)(case)(\() (.*) (\))$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+        4: punctuation.separator.htsl
+        5: source.php
+        6: punctuation.separator.htsl
+      push:
+        - meta_scope: meta.switch-case.htsl
+        - meta_content_scope: switch-case.htsl
+        - match: '^(?!\1\t)'
+          pop: true
+        - include: main
+
+  switch-default:
+    - match: '^(\t*)(~)(default)$'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: keyword.control-node
+      push:
+        - meta_scope: meta.switch-default.htsl
+        - meta_content_scope: switch-default.htsl
+        - match: '^(?!\1\t)'
+          pop: true
+        - include: main
+
+  tag-node:
+    - match: '^(\t*)(-)([\w:-]+)?(\n?)'
+      captures:
+        1: indent.htsl
+        2: punctuation.separator.htsl
+        3: entity.name.tag.htsl
+        4: coding.htsl
+      push:
+        - meta_scope: meta.tag.htsl
+        - match: '(?<=\n)'
+          pop: true
+        - match: '\('
+          captures:
+            0: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.tag.htsl
+            - meta_content_scope: string
+            - match: '(?<!\\)\|'
+              captures:
+                0: punctuation.separator.htsl
+            - match: '\)'
+              captures:
+                0: punctuation.separator.htsl
+              pop: true
+        # .class-name
+        - match: '(\s+)(\.)(\S+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: variable.class.htsl
+          push:
+            - meta_scope: meta.variable.class.htsl
+            - match: '(?=\s)'
+              pop: true
+            - match: '(?<=\.)\('
+              captures:
+                0: punctuation.separator.htsl
+              push:
+                - meta_scope: meta.class.php.htsl
+                - meta_content_scope: source.php
+                - match: '\)(?=[\.\s])'
+                  captures:
+                    0: punctuation.separator.htsl
+                  pop: true
+                - include: 'htsl-php-support.sublime-syntax#expressions'
+        # #id
+        - match: '(\s+)(\#)([\w-]+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: keyword.id.htsl
+          push:
+            - meta_scope: meta.keyword.id.htsl
+            - match: '(?=\s)'
+              pop: true
+        # ^title
+        - match: '(\s+)(\^)((?:\S| (?=[a-zA-Z0-9]))+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: string.title.htsl
+          push:
+            - meta_scope: meta.string.title.htsl
+            - match: '(?=\s)'
+              pop: true
+            - match: '(?<=\^)\('
+              captures:
+                0: punctuation.separator.htsl
+              push:
+                - meta_scope: meta.title.php.htsl
+                - meta_content_scope: source.php
+                - match: '\)(?=[\s])'
+                  captures:
+                    0: punctuation.separator.htsl
+                  pop: true
+                - include: 'htsl-php-support.sublime-syntax#expressions'
+        # ^target
+        - match: '(\s+)(>)((?:\S| (?=[a-zA-Z0-9]))+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: string.target.htsl
+          push:
+            - meta_scope: meta.string.title.htsl
+            - match: '(?=\s)'
+              pop: true
+            - match: '(?<=>)\('
+              captures:
+                0: punctuation.separator.htsl
+              push:
+                - meta_scope: meta.target.php.htsl
+                - meta_content_scope: source.php
+                - match: '\)(?=[\s])'
+                  captures:
+                    0: punctuation.separator.htsl
+                  pop: true
+                - include: 'htsl-php-support.sublime-syntax#expressions'
+        # ^place holder
+        - match: '(\s+)(_)((?:\S| (?=[a-zA-Z0-9]))+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: string.alt.htsl
+          push:
+            - meta_scope: meta.string.alt.htsl
+            - match: '(?=\s)'
+              pop: true
+            - match: '(?<=>)\('
+              captures:
+                0: punctuation.separator.htsl
+              push:
+                - meta_scope: meta.target.php.htsl
+                - meta_content_scope: source.php
+                - match: '\)(?=[\s])'
+                  captures:
+                    0: punctuation.separator.htsl
+                  pop: true
+                - include: 'htsl-php-support.sublime-syntax#expressions'
+        # @url
+        - match: '(\s+)(@)((?:\S| (?=[a-zA-Z0-9]))+)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: string.url.htsl
+          push:
+            - meta_scope: meta.string.title.htsl
+            - match: '(?=\s)'
+              pop: true
+        # <name|value|placehoder>
+        - match: '(\s+)(<)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.key-value.htsl
+            - meta_content_scope: source.php
+            - match: '(?<!\\)\|'
+              captures:
+                0: punctuation.separator.htsl
+            - match: '>(?=\s)'
+              captures:
+                0: punctuation.separator.htsl
+              pop: true
+            - match: '(?<=[^\\][<\|])\('
+              captures:
+                0: punctuation.separator.htsl
+              push:
+                - meta_scope: meta.entity-value.php.htsl
+                - meta_content_scope: source.php
+                - match: '\)(?=[\|>])'
+                  captures:
+                    0: punctuation.separator.htsl
+                  pop: true
+                - include: 'htsl-php-support.sublime-syntax#expressions'
+        # {key=value;}
+        - match: '(\s+)(\{)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.attribute.htsl
+            - meta_content_scope: attribute.htsl
+            - match: '([\w-:]+)'
+              captures:
+                1: meta.attribute.name.htsl entity
+              push:
+                - match: '(\?)([^=;]+)'
+                  captures:
+                    1: punctuation.separator.htsl
+                    2: meta.attribute.condition.htsl variable
+                - match: '(=)([^;]+)'
+                  captures:
+                    1: punctuation.separator.htsl
+                    2: meta.attribute.value.htsl string
+                - match: ';'
+                  pop: true
+            - match: '}'
+              captures:
+                0: punctuation.separator.htsl
+              pop: true
+        # [style:style-value;]
+        - match: '(\s+)(\[)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.embedded.css.htsl
+            - meta_content_scope: source.css
+            - match: '\]'
+              captures:
+                0: punctuation.separator.htsl
+              pop: true
+            - match: ''
+              push:
+                - include: 'CSS.sublime-syntax#rule-list-body'
+              with_prototype:
+                - match: '(?=\])'
+                  pop: true
+        # %Event
+        - match: '(\s+)(%)(\w+)(\{>)'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+            3: keyword.event.htsl
+            4: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.embedded.js.htsl
+            - meta_content_scope: source.js
+            - include: 'scope:source.js'
+          with_prototype:
+            - match: '<\}'
+              captures:
+                0: punctuation.separator.htsl
+              pop: true

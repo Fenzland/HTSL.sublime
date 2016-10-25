@@ -1,0 +1,15 @@
+<snippet>
+	<content><![CDATA[
+HTML5
+-html
+	-head
+		-charset(utf8)
+		-title
+			${1:Page writen with HTSL}
+	-body
+		$0
+]]></content>
+	<tabTrigger>html5</tabTrigger>
+	<scope>source.htsl</scope>
+	<description>HTML5</description>
+</snippet>

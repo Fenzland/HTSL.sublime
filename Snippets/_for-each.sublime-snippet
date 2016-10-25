@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+~for-each( ${1:$SELECTION} as ${2:\$${3:key}=>}\$${4:value} )
+	$0
+]]></content>
+	<scope>source.htsl</scope>
+	<description>~for-each( ... )</description>
+</snippet>

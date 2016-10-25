@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+~case( ${1:$SELECTION} )
+	$0
+]]></content>
+	<scope>source.htsl &amp; switch</scope>
+	<description>~case( ... )</description>
+</snippet>

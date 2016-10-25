@@ -1,0 +1,19 @@
+HTML5
+!^^^^ doctype
+-html
+	-head
+		-charset(utf-8)
+		-title
+			Tittle
+	-body
+		~if( aoeu )
+		-range(0|1|100)
+		!     ^^^^^^^^^ tag-node.param
+			  ^       ^ tag-node.param.brackets
+			   ^ ^ ^^^  tag-node.param.value
+			    ^ ^     tag-node.param.delimiter
+		-div
+!^^^^^^^ indentation
+	    ^^^^ tag-node
+	    ^ tag-node.sign
+	     ^^^ tag-node.name

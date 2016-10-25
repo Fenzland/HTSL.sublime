@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Indentation Rules</string>
+	<key>scope</key>
+	<string>source.htsl</string>
+	<key>settings</key>
+	<dict>
+		<key>decreaseIndentPattern</key>
+		<string>(?x)
+			^\t*(
+				(~
+					(else|then).*
+				)
+			)$
+		</string>
+		<key>increaseIndentPattern</key>
+		<string>(?x)
+			^\t*(
+				(-
+					((?!area|base|br|col|hr|img|input|link|meta|option|param|progress|source|wbr|polygon|polyline|path|line|rect|circle|ellipse|input|text|search|password|email|url|tel|number|range|radio|checkbox|date|month|week|time|datetime|datetime-local|color|file|shortcut|icon|charset|equiv|css @|js @)\w)+( \S+)*
+				)
+				|
+				(~
+					((?!continue|break).)+.*
+				)
+				|
+				(@
+					(section|show).*
+				)
+			)$
+		</string>
+		<key>indentNextLinePattern</key>
+		<string></string>
+		<key>unIndentedLinePattern</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>

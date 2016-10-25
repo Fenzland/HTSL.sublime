@@ -1,0 +1,46 @@
+[
+	{"keys":["@",],"command":"insert_snippet","args":{"contents":"@${1:s}${1/(i)|(e)|(sh)|(se)|(s)|(.)/(?1:nclude)(?2:xtend)(?3:ow)(?4:ction)(?5:ection)/g}( ${2:name} )",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*($)","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+	{"keys":["~",],"command":"insert_snippet","args":{"contents":"~${1:i}${1/(ife)|(if)|(i)|(e)|(fo)|(f)|(s)|(d)|(c)|(w)|(.)/(?1:lse\\( )(?2:not\\( )(?3:f\\( )(?4:lse)(?5:r\\( )(?6:oreach\\( )(?7:witch\\( )(?8:efault)(?9:ase\\( )(?10:hile\\( )(?11:\\( )/g}${2}${1/(e|d)|(.)/(?2: \\))/g}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*($)","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+	{"keys":["{",],"command":"insert_snippet","args":{"contents":"{>\n\t$1\n<}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-\\w+$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"line.htsl - space","match_all":true,},
+		],
+	},
+	{"keys":["{",],"command":"insert_snippet","args":{"contents":"{>$1<}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^.+%\\w+$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl - space","match_all":true,},
+		],
+	},
+	{"keys":["{",],"command":"insert_snippet","args":{"contents":"{$1;}",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl space","match_all":true,},
+		],
+	},
+	{"keys":["%",],"command":"insert_snippet","args":{"contents":"%${1:click}{>$2<}",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl space","match_all":true,},
+		],
+	},
+	{"keys":["shift+enter",],"command":"insert","args":{"characters":";",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"entity-key-value.htsl","match_all":true,},
+		],
+	},
+	{"keys":["shift+enter",],"command":"insert","args":{"characters":"|",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"meta.key-value.htsl, meta.function_call.htsl","match_all":true,},
+		],
+	},
+]

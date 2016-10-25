@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+~while( ${1:$SELECTION} )
+	$0
+]]></content>
+	<scope>source.htsl</scope>
+	<description>~while( ... )</description>
+</snippet>

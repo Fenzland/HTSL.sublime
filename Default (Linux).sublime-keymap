@@ -1,0 +1,146 @@
+[
+	// Base
+
+	{"keys":["ctrl+v",],"command":"paste_and_indent","context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+	{"keys":["ctrl+shift+v",],"command":"paste","context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// Document Controller
+	{"keys":["@",],"command":"insert_snippet","args":{"contents":"@${1:s}${1/(i)|(e)|(sh)|(se)|(s)|(.)/(?1:nclude)(?2:xtend)(?3:ow)(?4:ction)(?5:ection)/g}( ${2:name} )",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl empty-line","match_all":true,},
+		],
+	},
+
+	// Control Node
+	{"keys":["~",],"command":"run_macro_file","args":{"file":"res://Packages/HTSL/control-node-complete.sublime-macro",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl empty-line","match_all":true,},
+		],
+	},
+
+	// Tag Node
+	{"keys":["-",],"command":"run_macro_file","args":{"file":"res://Packages/HTSL/tag-node-complete.sublime-macro",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl empty-line","match_all":true,},
+		],
+	},
+
+	// id
+	{"keys":["#",],"command":"insert_snippet","args":{"contents":"$SELECTION #${0:id}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-\\w+$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( [^#]\\S*)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// link
+	{"keys":["@",],"command":"insert_snippet","args":{"contents":"$SELECTION @${0:link}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-(a|css|js|img|link|icon|shortcut|iframe|post|get|update|submit|source|base)+( [^@]\\S*)*$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( [^@]\\S*)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// target
+	{"keys":[">",],"command":"insert_snippet","args":{"contents":"$SELECTION >${0:_blank}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-(a|post|get|update|submit|base)( [^<@>]\\S*)*$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( [^>]\\S*)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// class first
+	{"keys":[".",],"command":"insert_snippet","args":{"contents":"$SELECTION .${0:class}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-\\w+( #\\S*)*$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( [^.]\\S*)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// class next
+	{"keys":[".",],"command":"insert_snippet","args":{"contents":"$SELECTION.${0:class}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-\\w+( [^.]\\S*)*( \\.\\S+)$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( [^.]\\S*)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// listener
+	{"keys":["%",],"command":"insert_snippet","args":{"contents":"$SELECTION %${1:click}{>$2<}$0",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-\\w+( \\S+)*$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^[a-zA-Z0-9]*( \\S+)*$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		],
+	},
+
+	// Embedding
+	{"keys":["{",],"command":"insert_snippet","args":{"contents":"{>\n\t$1\n<}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-(js|php|css)+$","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl entity.coding","match_all":true,},
+		],
+	},
+
+	{"keys":["shift+enter",],"command":"insert","args":{"characters":";",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"entity-key-value.htsl","match_all":true,},
+		],
+	},
+
+	{"keys":["shift+enter",],"command":"insert","args":{"characters":"|",},"context":
+		[
+			{"key":"selector","operator":"equal","operand":"meta.key-value.htsl, meta.function_call.htsl","match_all":true,},
+		],
+	},
+
+
+	//Tags
+	// {"keys":["-","n","u","m","b","e","r",],"command":"insert_snippet","args":{"contents":"-number(${1:min}|${2:step}|${3:max})",},"context":
+		// [
+			// {"key":"preceding_text","operator":"regex_match","operand":"^\t*-?\\w*","match_all":true,},
+			// {"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+		// ],
+	// },
+
+
+	{"keys":["tab",],"command":"htsl_smart_indent","context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+			{"key":"selection_empty","operator":"equal","operand":true,"match_all":true,},
+			{"key":"has_next_field","operator":"not_equal","operand":true,},
+			{"key":"preceding_text","operator":"not_regex_match","operand":"^\t*$","match_all":true,},
+			{"key":"following_text","operator":"regex_match","operand":"^$","match_all":true,},
+		],
+	},
+
+	{"keys":["tab",],"command":"htsl_smart_indent","context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+			{"key":"selection_empty","operator":"equal","operand":true,"match_all":true,},
+			{"key":"has_next_field","operator":"not_equal","operand":true,},
+			{"key":"following_text","operator":"not_regex_match","operand":"^$","match_all":true,},
+		],
+	},
+	{"keys":["shift+tab",],"command":"htsl_smart_unindent","context":
+		[
+			{"key":"selector","operator":"equal","operand":"source.htsl","match_all":true,},
+			{"key":"selection_empty","operator":"equal","operand":true,"match_all":true,},
+			{"key":"has_prev_field","operator":"not_equal","operand":true,},
+			{"key":"following_text","operator":"not_regex_match","operand":"^$","match_all":true,},
+		],
+	},
+]

@@ -1,0 +1,7 @@
+<snippet>
+	<content><![CDATA[
+~break( ${1:$SELECTION} )
+]]></content>
+	<scope>source.htsl</scope>
+	<description>~break( ... )</description>
+</snippet>

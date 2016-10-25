@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+~default
+	$0
+]]></content>
+	<scope>source.htsl &amp; switch</scope>
+	<description>~default</description>
+</snippet>

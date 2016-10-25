@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+~for(  $1;  ${2:$SELECTION};  $3;  )
+	$0
+]]></content>
+	<scope>source.htsl</scope>
+	<description>~for( ... )</description>
+</snippet>
