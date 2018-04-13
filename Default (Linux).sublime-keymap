@@ -95,6 +95,14 @@
 		],
 	},
 
+	// Embedding
+	{"keys":["{",],"command":"insert_snippet","args":{"contents":"{${1:$SELECTION};}",},"context":
+		[
+			{"key":"preceding_text","operator":"regex_match","operand":"^\t*-.+ $","match_all":true,},
+			{"key":"selector","operator":"equal","operand":"source.htsl meta.tag","match_all":true,},
+		],
+	},
+
 	{"keys":["shift+enter",],"command":"insert","args":{"characters":";",},"context":
 		[
 			{"key":"selector","operator":"equal","operand":"entity-key-value.htsl","match_all":true,},

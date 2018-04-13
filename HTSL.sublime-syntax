@@ -99,7 +99,7 @@ contexts:
           pop: true
 
     # JS embedding
-    - match: '^(\t*)(-)(js)(\{>)$'
+    - match: '^(\t*)(-)(m?js)(\{>)$'
       captures:
         1: indent.htsl
         2: punctuation.separator.htsl
@@ -154,7 +154,7 @@ contexts:
   # ~Control node
   control-node:
     # else like
-    - match: ^(\t*)(~)(else|then|continue|break)
+    - match: ^(\t*)(~)(else|then|continue|break)$
       captures:
         1: indent.htsl
         2: punctuation.separator.htsl
@@ -164,7 +164,7 @@ contexts:
           pop: true
 
     # if like  #TODO: loops with continue and break like switch;
-    - match: '^(\t*)(~)(if|if-not|if-all|if-all-not|if-not-all|if-not-all-not|else-if|while|do-while|continue|break)(\() '
+    - match: '^(\t*)(~)(if|if-not|if-all|if-all-not|if-not-all|if-not-all-not|else-if|else-if-not|while|do-while|continue|break)(\() '
       captures:
         1: indent.htsl
         2: punctuation.separator.htsl
@@ -380,7 +380,7 @@ contexts:
                     0: punctuation.separator.htsl
                   pop: true
                 - include: 'htsl-php-support.sublime-syntax#expressions'
-        # ^target
+        # >target
         - match: '(\s+)(>)((?:\S| (?=[a-zA-Z0-9]))+)'
           captures:
             1: space
@@ -423,7 +423,7 @@ contexts:
                   pop: true
                 - include: 'htsl-php-support.sublime-syntax#expressions'
         # @url
-        - match: '(\s+)(@)((?:\S| (?=[a-zA-Z0-9]))+)'
+        - match: '(\s+)(@)((?:[^\(\s])+)'
           captures:
             1: space
             2: punctuation.separator.htsl
@@ -432,6 +432,17 @@ contexts:
             - meta_scope: meta.string.title.htsl
             - match: '(?=\s)'
               pop: true
+        - match: '(\s+)(@\()'
+          captures:
+            1: space
+            2: punctuation.separator.htsl
+          push:
+            - meta_scope: meta.string.title.htsl
+            - match: '(\))(?=\s)'
+              captures:
+                1: punctuation.separator.htsl
+              pop: true
+            - include: 'htsl-php-support.sublime-syntax#expressions'
         # <name|value|placehoder>
         - match: '(\s+)(<)'
           captures:
